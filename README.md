@@ -3,6 +3,7 @@
 - Eslint
 - Prettier
 - editorConfig
+- ts-node-dev
 
 ####Usaremos o `Yarn` como gerenciador de pacotes
 
@@ -148,4 +149,16 @@ No arquivo eslintrc.json alteramos algumas configurações para:
     }
   }
 }
+```
+## ts-node-dev
+Serve apenas para atualizar o servidor sem ficar derrubando e levantando o tempo todo
+
+Instalação
+`yarn add -D ts-node-dev`
+
+No arquivo package.json adicionamos o script para rodar o ts-node-dev
+```json
+  "scripts": {
+    "dev": "ts-node-dev --exit-child --respawn --ignore-watch node_modules --transpile-only src/server.ts"
+  },
 ```
