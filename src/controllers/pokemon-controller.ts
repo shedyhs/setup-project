@@ -37,28 +37,28 @@ export class PokemonController {
     });
   }
 
-  updatePokemon(req: Request, res: Response) {
-    const { nome } = req.params;
+  async updatePokemon(req: Request, res: Response) {
+    const { id } = req.params;
     const { nivel } = req.body;
-    const pokemon = this.pokemonRepository.findByName(nome);
+    const pokemon = await this.pokemonRepository.findById(Number(id));
     if (!pokemon) {
       return res.status(404).json({
         mensagem: 'Pokemon não encontrado',
       });
     }
-    this.pokemonRepository.updateLevel(nome, nivel);
+    await this.pokemonRepository.updateLevel(Number(id), nivel);
     return res.status(204).send();
   }
 
-  deletePokemon(req: Request, res: Response) {
-    const { nome } = req.params;
-    const pokemon = this.pokemonRepository.findByName(nome);
+  async deletePokemon(req: Request, res: Response) {
+    const { id } = req.params;
+    const pokemon = await this.pokemonRepository.findById(Number(id));
     if (!pokemon) {
       return res.status(404).json({
         mensagem: 'Pokemon não encontrado',
       });
     }
-    this.pokemonRepository.remove(nome);
+    await this.pokemonRepository.remove(Number(id));
     return res.status(204).send();
   }
 

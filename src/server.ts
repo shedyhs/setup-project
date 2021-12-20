@@ -11,10 +11,10 @@ app.post('/pokemon', async (req, res) =>
 app.get('/pokemon/:nome', async (req, res) =>
   pokemonController.getPokemonByName(req, res),
 );
-app.patch('/pokemon/:nome', (req, res) =>
+app.patch('/pokemon/:id', async (req, res) =>
   pokemonController.updatePokemon(req, res),
 );
-app.delete('/pokemon/:nome', (req, res) =>
+app.delete('/pokemon/:id', async (req, res) =>
   pokemonController.deletePokemon(req, res),
 );
 app.get('/pokemon', async (req, res) => pokemonController.getAll(req, res));

@@ -1,48 +1,68 @@
-import pgp from 'pg-promise';
+import { PrismaClient } from '@prisma/client';
 import { Pokemon } from '../entities/pokemon';
 
 export class PokemonRepository {
-  private pokemons: Pokemon[];
-  private pgpClient;
+  private prisma;
 
   constructor() {
-    this.pokemons = [];
-    this.pgpClient = pgp()(
-      'postgres://postgres:postgres@localhost:5432/postgres',
-    );
+    this.prisma = new PrismaClient();
   }
 
   async insert(pokemon: Pokemon): Promise<void> {
-    await this.pgpClient.query(
-      `insert into pokemon (id, name, level, type) values ($1, $2, $3, $4)`,
-      [pokemon.id, pokemon.nome, pokemon.nivel, pokemon.tipo],
-    );
-    this.pokemons.push(pokemon);
+    await this.prisma.pokemon.create({
+      data: {
+        id: pokemon.id,
+        name: pokemon.nome,
+        level: pokemon.nivel,
+        type: pokemon.tipo,
+      },
+    });
   }
 
   async findByName(name: string): Promise<Pokemon | undefined> {
-    const [result] = await this.pgpClient.query(
-      'select * from pokemon where name = $1',
-      [name],
-    );
+    const result = await this.prisma.pokemon.findFirst({
+      where: {
+        name,
+      },
+    });
     if (!result) {
       return undefined;
     }
     return new Pokemon(result.name, result.level, result.type, result.id);
   }
 
-  async updateLevel(name: string, level: number) {
-    const pokemon = (await this.findByName(name)) as Pokemon;
-    this.pokemons = this.pokemons.filter((p) => p.nome !== name);
-    pokemon.nivel = level;
-    this.pokemons.push(pokemon);
+  async findById(id: number) {
+    const result = await this.prisma.pokemon.findUnique({
+      where: {
+        id,
+      },
+    });
+    if (!result) {
+      return undefined;
+    }
+    return new Pokemon(result.name, result.level, result.type, result.id);
   }
 
-  remove(name: string) {
-    this.pokemons = this.pokemons.filter((p) => p.nome !== name);
+  async updateLevel(id: number, level: number) {
+    await this.prisma.pokemon.update({
+      data: {
+        level,
+      },
+      where: {
+        id,
+      },
+    });
+  }
+
+  async remove(id: number) {
+    await this.prisma.pokemon.delete({
+      where: {
+        id,
+      },
+    });
   }
 
   async findAll() {
-    return this.pgpClient.query('select * from pokemon');
+    return this.prisma.pokemon.findMany();
   }
 }
