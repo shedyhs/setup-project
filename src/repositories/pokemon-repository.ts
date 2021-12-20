@@ -1,22 +1,38 @@
+import pgp from 'pg-promise';
 import { Pokemon } from '../entities/pokemon';
 
 export class PokemonRepository {
   private pokemons: Pokemon[];
+  private pgpClient;
 
   constructor() {
     this.pokemons = [];
+    this.pgpClient = pgp()(
+      'postgres://postgres:postgres@localhost:5432/postgres',
+    );
   }
 
-  insert(pokemon: Pokemon) {
+  async insert(pokemon: Pokemon): Promise<void> {
+    await this.pgpClient.query(
+      `insert into pokemon (id, name, level, type) values ($1, $2, $3, $4)`,
+      [pokemon.id, pokemon.nome, pokemon.nivel, pokemon.tipo],
+    );
     this.pokemons.push(pokemon);
   }
 
-  findByName(name: string): Pokemon | undefined {
-    return this.pokemons.find((p) => p.nome === name);
+  async findByName(name: string): Promise<Pokemon | undefined> {
+    const [result] = await this.pgpClient.query(
+      'select * from pokemon where name = $1',
+      [name],
+    );
+    if (!result) {
+      return undefined;
+    }
+    return new Pokemon(result.name, result.level, result.type, result.id);
   }
 
-  updateLevel(name: string, level: number) {
-    const pokemon = this.findByName(name) as Pokemon;
+  async updateLevel(name: string, level: number) {
+    const pokemon = (await this.findByName(name)) as Pokemon;
     this.pokemons = this.pokemons.filter((p) => p.nome !== name);
     pokemon.nivel = level;
     this.pokemons.push(pokemon);
@@ -26,7 +42,7 @@ export class PokemonRepository {
     this.pokemons = this.pokemons.filter((p) => p.nome !== name);
   }
 
-  findAll() {
-    return this.pokemons;
+  async findAll() {
+    return this.pgpClient.query('select * from pokemon');
   }
 }

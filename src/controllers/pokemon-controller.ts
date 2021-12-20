@@ -9,10 +9,10 @@ export class PokemonController {
     this.pokemonRepository = new PokemonRepository();
   }
 
-  createPokemon(req: Request, res: Response) {
+  async createPokemon(req: Request, res: Response) {
     const { nome, nivel, tipo } = req.body;
     const pokemon = new Pokemon(nome, nivel, tipo);
-    this.pokemonRepository.insert(pokemon);
+    await this.pokemonRepository.insert(pokemon);
     res.status(201).json({
       id: pokemon.id,
       nome: pokemon.nome,
@@ -21,9 +21,9 @@ export class PokemonController {
     });
   }
 
-  getPokemonByName(req: Request, res: Response) {
+  async getPokemonByName(req: Request, res: Response) {
     const { nome } = req.params;
-    const pokemon = this.pokemonRepository.findByName(nome);
+    const pokemon = await this.pokemonRepository.findByName(nome);
     if (!pokemon) {
       return res.status(404).json({
         mensagem: 'Pokemon não encontrado',
@@ -62,8 +62,8 @@ export class PokemonController {
     return res.status(204).send();
   }
 
-  getAll(req: Request, res: Response) {
-    const pokemons = this.pokemonRepository.findAll();
+  async getAll(req: Request, res: Response) {
+    const pokemons = await this.pokemonRepository.findAll();
     return res.status(200).json(pokemons);
   }
 }
