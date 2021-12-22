@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { Pokemon } from '../entities/pokemon';
+import { PokemonType } from '../entities/pokemon-type';
 
 export class PokemonRepository {
   private prisma;
@@ -14,7 +15,7 @@ export class PokemonRepository {
         id: pokemon.id,
         name: pokemon.nome,
         level: pokemon.nivel,
-        type: pokemon.tipo,
+        typeId: pokemon.tipo.id,
       },
     });
   }
@@ -24,11 +25,19 @@ export class PokemonRepository {
       where: {
         name,
       },
+      include: {
+        type: true,
+      },
     });
     if (!result) {
       return undefined;
     }
-    return new Pokemon(result.name, result.level, result.type, result.id);
+    return new Pokemon(
+      result.name,
+      result.level,
+      new PokemonType(result.type.id, result.type.name),
+      result.id,
+    );
   }
 
   async findById(id: number) {
@@ -36,11 +45,19 @@ export class PokemonRepository {
       where: {
         id,
       },
+      include: {
+        type: true,
+      },
     });
     if (!result) {
       return undefined;
     }
-    return new Pokemon(result.name, result.level, result.type, result.id);
+    return new Pokemon(
+      result.name,
+      result.level,
+      new PokemonType(result.type.id, result.type.name),
+      result.id,
+    );
   }
 
   async updateLevel(id: number, level: number) {
@@ -63,6 +80,10 @@ export class PokemonRepository {
   }
 
   async findAll() {
-    return this.prisma.pokemon.findMany();
+    return this.prisma.pokemon.findMany({
+      include: {
+        type: true,
+      },
+    });
   }
 }

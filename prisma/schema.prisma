@@ -8,8 +8,15 @@ datasource db {
 }
 
 model pokemon {
-  id    Int    @id
-  name  String
-  level Int
-  type  String
+  id     Int    @id
+  name   String
+  level  Int
+  type   Type   @relation(fields: [typeId], references: [id])
+  typeId Int
+}
+
+model Type {
+  id      Int       @id
+  name    String
+  pokemon pokemon[]
 }

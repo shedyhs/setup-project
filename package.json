@@ -5,7 +5,8 @@
   "repository": "https://github.com/shedyhs/setup-project.git",
   "license": "MIT",
   "scripts": {
-    "dev": "ts-node-dev --exit-child --respawn --ignore-watch node_modules --transpile-only src/server.ts"
+    "dev": "ts-node-dev --exit-child --respawn --ignore-watch node_modules --transpile-only src/server.ts",
+    "seed": "ts-node prisma/seed.ts"
   },
   "devDependencies": {
     "@types/express": "^4.17.13",

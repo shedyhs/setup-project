@@ -1,19 +1,28 @@
 import { Request, Response } from 'express';
 import { Pokemon } from '../entities/pokemon';
 import { PokemonRepository } from '../repositories/pokemon-repository';
+import { PokemonTypeRepository } from '../repositories/pokemon-type-repository';
 
 export class PokemonController {
   private pokemonRepository: PokemonRepository;
+  private pokemonTypeRepository: PokemonTypeRepository;
 
   constructor() {
     this.pokemonRepository = new PokemonRepository();
+    this.pokemonTypeRepository = new PokemonTypeRepository();
   }
 
   async createPokemon(req: Request, res: Response) {
     const { nome, nivel, tipo } = req.body;
-    const pokemon = new Pokemon(nome, nivel, tipo);
+    const pokemonType = await this.pokemonTypeRepository.findById(tipo);
+    if (!pokemonType) {
+      return res.status(404).json({
+        mensagem: 'Tipo não encontrado',
+      });
+    }
+    const pokemon = new Pokemon(nome, nivel, pokemonType);
     await this.pokemonRepository.insert(pokemon);
-    res.status(201).json({
+    return res.status(201).json({
       id: pokemon.id,
       nome: pokemon.nome,
       nivel: pokemon.nivel,
