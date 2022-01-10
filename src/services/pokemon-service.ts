@@ -29,8 +29,8 @@ export class PokemonService {
     return this.pokemonRepository.findByName(nome);
   }
 
-  async update(id: number, level: number): Promise<Error | void> {
-    const pokemon = await this.pokemonRepository.findById(Number(id));
+  async update(id: string, level: number): Promise<Error | void> {
+    const pokemon = await this.pokemonRepository.findById(id);
     if (!pokemon) {
       return new Error('Pokemon not found');
     }
@@ -38,8 +38,8 @@ export class PokemonService {
     return undefined;
   }
 
-  async delete(id: number): Promise<Error | void> {
-    const pokemon = await this.pokemonRepository.findById(Number(id));
+  async delete(id: string): Promise<Error | void> {
+    const pokemon = await this.pokemonRepository.findById(id);
     if (!pokemon) {
       return new Error('Pokemon not found');
     }

@@ -43,7 +43,7 @@ export class PokemonController {
   async updatePokemon(req: Request, res: Response) {
     const { id } = req.params;
     const { nivel } = req.body;
-    const pokemon = await this.pokemonService.update(Number(id), nivel);
+    const pokemon = await this.pokemonService.update(id, nivel);
     if (pokemon instanceof Error) {
       return res.status(404).json({
         mensagem: pokemon.message,
@@ -54,7 +54,7 @@ export class PokemonController {
 
   async deletePokemon(req: Request, res: Response) {
     const { id } = req.params;
-    const pokemon = await this.pokemonService.delete(Number(id));
+    const pokemon = await this.pokemonService.delete(id);
     if (pokemon instanceof Error) {
       return res.status(404).json({
         mensagem: pokemon.message,

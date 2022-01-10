@@ -40,7 +40,7 @@ export class PokemonRepository {
     );
   }
 
-  async findById(id: number) {
+  async findById(id: string) {
     const result = await this.prisma.pokemon.findUnique({
       where: {
         id,
@@ -60,7 +60,7 @@ export class PokemonRepository {
     );
   }
 
-  async updateLevel(id: number, level: number) {
+  async updateLevel(id: string, level: number) {
     await this.prisma.pokemon.update({
       data: {
         level,
@@ -71,7 +71,7 @@ export class PokemonRepository {
     });
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     await this.prisma.pokemon.delete({
       where: {
         id,
